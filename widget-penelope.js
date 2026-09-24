@@ -192,10 +192,11 @@
         /* ── Inline button ── */
         .q-btn-inline-provador {
             display: flex; align-items: center; justify-content: center; gap: 7px;
-            width: 100%; padding: 13px 16px;
+            width: 100%; padding: 0 15px !important;
             background: transparent; color: var(--c-ink);
-            border: 1.5px solid var(--c-accent); border-radius: 0 !important; min-height: 48px; /* cantos e altura iguais ao "Comprar" da Penélope */
-            font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: none;
+            /* cantos, altura e texto iguais ao "Comprar" da Penélope (Montserrat 14px/400, linha 18px, 48px) */
+            border: 1.5px solid var(--c-accent); border-radius: 0 !important; height: 48px !important;
+            font-family: inherit; font-size: 14px !important; font-weight: 400 !important; letter-spacing: normal !important; line-height: 18px !important; text-transform: none;
             cursor: pointer; transition: background 0.25s, color 0.25s;
             margin-top: 14px !important; margin-bottom: 10px; box-sizing: border-box;
         }
