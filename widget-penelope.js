@@ -1,6 +1,9 @@
 (function () {
     // PILOTO: provador só nestes produtos. Para liberar mais, adicione o caminho aqui.
-    var PL_PILOT_PATHS = ['/produtos/cabelo-cacho-2-indiano-elastico'];
+    var PL_PILOT_PATHS = [
+        '/produtos/cabelo-cacho-2-indiano-elastico',          // cacheado
+        '/produtos/cabelo-indiano-fita-nanopele-liso-ondulado' // liso ondulado
+    ];
     function plIsPilot() { var p = window.location.pathname || ''; return PL_PILOT_PATHS.some(function (x) { return p.indexOf(x) === 0; }); }
     function toJpeg(file){return new Promise(function(res){try{var img=new Image();var u=URL.createObjectURL(file);img.onload=function(){URL.revokeObjectURL(u);var w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;if(!w||!h){res(file);return;}var sc=Math.min(1,1280/Math.max(w,h));var cw=Math.round(w*sc),ch=Math.round(h*sc);var c=document.createElement('canvas');c.width=cw;c.height=ch;c.getContext('2d').drawImage(img,0,0,cw,ch);c.toBlob(function(b){res(b||file);},'image/jpeg',0.92);};img.onerror=function(){URL.revokeObjectURL(u);res(file);};img.src=u;}catch(e){res(file);}});}
 
@@ -1175,6 +1178,21 @@
         const buyBtn = document.querySelector('.js-addtocart, .btn-add-to-cart, [data-component="product.add-to-cart"]');
         if (buyBtn) {
             buyBtn.parentNode.insertBefore(inlineBtn, buyBtn.nextSibling);
+            // Mesma altura e mesmo texto do "Comprar" — a altura dele muda conforme a
+            // largura da tela (42px/48px...), então copia na hora e a cada resize.
+            const plMatchBuy = () => {
+                try {
+                    const cs = getComputedStyle(buyBtn);
+                    const h = buyBtn.getBoundingClientRect().height;
+                    if (h > 0) inlineBtn.style.setProperty('height', h + 'px', 'important');
+                    ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'line-height', 'text-transform'].forEach(function (k) {
+                        inlineBtn.style.setProperty(k, cs.getPropertyValue(k), 'important');
+                    });
+                } catch (_) {}
+            };
+            plMatchBuy();
+            setTimeout(plMatchBuy, 800);
+            window.addEventListener('resize', plMatchBuy);
         } else {
             const variantsContainer = document.querySelector('.js-product-variants');
             if (variantsContainer) {
