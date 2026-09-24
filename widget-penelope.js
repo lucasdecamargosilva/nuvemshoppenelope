@@ -2042,7 +2042,20 @@ const fd = new FormData();
 
                     calculateFinalSize();
 
-                    const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                    // Internet de celular cai no meio do envio da foto (pedido nem chega no
+                    // servidor) → antes de mostrar "ALTA DEMANDA", tenta de novo até 2x.
+                    // Só repete falha de rede ou erro temporário (429/502/503/504).
+                    let res = null;
+                    for (let _tent = 1; _tent <= 3; _tent++) {
+                        try {
+                            res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                            if (![429, 502, 503, 504].includes(res.status) || _tent === 3) break;
+                        } catch (_netErr) {
+                            if (_tent === 3) throw _netErr;
+                        }
+                        console.warn('[PL Penelope] envio falhou, tentando de novo (' + (_tent + 1) + '/3)');
+                        await new Promise(r => setTimeout(r, 2000 * _tent));
+                    }
 
                     const contentType = res.headers.get("content-type") || "";
                     if (contentType.includes("application/json")) {
