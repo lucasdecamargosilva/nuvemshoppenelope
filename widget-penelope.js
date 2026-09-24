@@ -1011,10 +1011,17 @@
         var instEl = document.getElementById('q-result-installment');
         if (instEl) { var _inst = getInstallment(); instEl.textContent = _inst; instEl.style.display = _inst ? 'block' : 'none'; }
         if (info && ((prodName || '').trim() || price)) info.style.display = 'block';
-        // Escassez
+        // Escassez: só com ESTOQUE REAL da variação escolhida e quando estiver baixo.
+        // (O número calculado pelo nome do produto não correspondia ao estoque —
+        // "apenas N unidades" falso é propaganda enganosa. Sem estoque controlado,
+        // como na Penélope hoje, o aviso simplesmente não aparece.)
         var sc = document.getElementById('q-scarcity');
         var scn = document.getElementById('q-scarcity-n');
-        if (sc && scn && (prodName || '').trim()) { scn.textContent = scarcityCount(prodName); sc.style.display = 'flex'; }
+        if (sc && scn) {
+            var _stock = plRealStock();
+            if (_stock !== null && _stock > 0 && _stock <= 10) { scn.textContent = _stock; sc.style.display = 'flex'; }
+            else sc.style.display = 'none';
+        }
         // Notificações de compra: desativadas em todos os provadores
         btn.style.display = 'flex';
         if (trust) trust.style.display = 'flex';
@@ -2133,6 +2140,18 @@ const fd = new FormData();
             });
         } catch (_) {}
         return out;
+    }
+
+    // Estoque real da variação selecionada (Nuvemshop: data-variants). null = sem controle.
+    function plRealStock() {
+        try {
+            var form = document.querySelector('[data-store^="product-form-"]') || document;
+            var dvEl = form.querySelector('[data-variants]') || document.querySelector('[data-variants]');
+            var list = JSON.parse(dvEl.getAttribute('data-variants'));
+            var sel = Array.prototype.map.call(form.querySelectorAll('select.js-variation-option'), function (s) { return s.value; });
+            var v = list.find(function (x) { return sel.every(function (val, i) { return x['option' + i] === val; }); }) || (list.length === 1 ? list[0] : null);
+            return v && typeof v.stock === 'number' ? v.stock : null;
+        } catch (_) { return null; }
     }
 
     function plHairGallery() {
