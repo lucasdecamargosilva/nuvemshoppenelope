@@ -197,7 +197,7 @@
             border: 1.5px solid var(--c-accent); border-radius: 8px;
             font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: none;
             cursor: pointer; transition: background 0.25s, color 0.25s;
-            margin-bottom: 10px; box-sizing: border-box;
+            margin-top: 14px !important; margin-bottom: 10px; box-sizing: border-box;
         }
         .q-btn-inline-provador:hover { background: var(--c-accent); color: #fff; }
         .q-btn-inline-provador svg { width: 14px; height: 14px; flex-shrink: 0; }
