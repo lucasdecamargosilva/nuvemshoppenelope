@@ -194,7 +194,7 @@
             display: flex; align-items: center; justify-content: center; gap: 7px;
             width: 100%; padding: 13px 16px;
             background: transparent; color: var(--c-ink);
-            border: 1.5px solid var(--c-accent); border-radius: 8px;
+            border: 1.5px solid var(--c-accent); border-radius: 0 !important; min-height: 48px; /* cantos e altura iguais ao "Comprar" da Penélope */
             font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: none;
             cursor: pointer; transition: background 0.25s, color 0.25s;
             margin-top: 14px !important; margin-bottom: 10px; box-sizing: border-box;
@@ -972,26 +972,27 @@
 
     // Parcelamento — o MESMO da pagina: pega a MAIOR parcela do produto ("em ate Nx de R$ X").
     // Le do data-variants (mesma fonte do preco). installments_data vem como STRING JSON aninhada.
+    // Olha TODOS os meios de pagamento (na Penélope o 1º é "Nuvem Pago", só 1x — o 3x
+    // sem juros está no "Mercado Pago") e usa a variação ESCOLHIDA, não a primeira.
     function getInstallment() {
-        var dv = document.querySelector('[data-variants]');
-        if (!dv) return '';
         try {
-            var v = JSON.parse(dv.getAttribute('data-variants'))[0];
-            var idata = v.installments_data;
+            var v = plCurrentVariant();
+            var idata = v && v.installments_data;
             if (!idata) return '';
             if (typeof idata === 'string') idata = JSON.parse(idata);
-            var plans = idata[Object.keys(idata)[0]];
-            if (!plans) return '';
             var best = null;
-            Object.keys(plans).forEach(function (k) {
-                var n = parseInt(k, 10);
-                var p = plans[k];
-                if (n >= 2 && p.installment_value > 0) {
-                    var free = p.without_interests === true;
-                    if (!best || (free && !best.free) || (free === best.free && n > best.n)) best = { n: n, val: p.installment_value, free: free };
-                }
+            Object.keys(idata).forEach(function (gw) {
+                var plans = idata[gw] || {};
+                Object.keys(plans).forEach(function (k) {
+                    var n = parseInt(k, 10);
+                    var p = plans[k];
+                    if (n >= 2 && p && p.installment_value > 0) {
+                        var free = p.without_interests === true;
+                        if (!best || (free && !best.free) || (free === best.free && n > best.n)) best = { n: n, val: p.installment_value, free: free };
+                    }
+                });
             });
-            if (best) return best.n + 'x de R$ ' + Number(best.val).toFixed(2).replace('.', ',');
+            if (best) return best.n + 'x de R$ ' + Number(best.val).toFixed(2).replace('.', ',') + (best.free ? ' sem juros' : '');
         } catch (e) {}
         return '';
     }
@@ -2142,16 +2143,21 @@ const fd = new FormData();
         return out;
     }
 
-    // Estoque real da variação selecionada (Nuvemshop: data-variants). null = sem controle.
-    function plRealStock() {
+    // Variação escolhida pela cliente (Nuvemshop: data-variants + selects da variação).
+    function plCurrentVariant() {
         try {
             var form = document.querySelector('[data-store^="product-form-"]') || document;
             var dvEl = form.querySelector('[data-variants]') || document.querySelector('[data-variants]');
             var list = JSON.parse(dvEl.getAttribute('data-variants'));
             var sel = Array.prototype.map.call(form.querySelectorAll('select.js-variation-option'), function (s) { return s.value; });
-            var v = list.find(function (x) { return sel.every(function (val, i) { return x['option' + i] === val; }); }) || (list.length === 1 ? list[0] : null);
-            return v && typeof v.stock === 'number' ? v.stock : null;
+            return list.find(function (x) { return sel.length && sel.every(function (val, i) { return x['option' + i] === val; }); }) || list[0] || null;
         } catch (_) { return null; }
+    }
+
+    // Estoque real da variação selecionada. null = sem controle de estoque.
+    function plRealStock() {
+        var v = plCurrentVariant();
+        return v && typeof v.stock === 'number' ? v.stock : null;
     }
 
     function plHairGallery() {
