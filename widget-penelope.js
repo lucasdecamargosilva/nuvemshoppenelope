@@ -705,6 +705,9 @@
         }
         .q-powered-footer span { font-size: 9.5px; letter-spacing: 1.5px; text-transform: none; color: var(--c-muted); }
         .q-quantic-logo { height: 20px; opacity: 0.7; }
+        .q-length-opts { display: flex; gap: 8px; justify-content: center; margin: 0 0 16px; }
+        .q-length-opt { flex: 1; max-width: 96px; height: 42px; border: 1.5px solid var(--c-line); background: #fff; color: var(--c-ink); font-family: inherit; font-size: 14px; cursor: pointer; border-radius: 0; }
+        .q-length-opt.is-on { border-color: var(--c-accent); background: var(--c-surface); font-weight: 600; }
         #q-photo-selector-group { display: none !important; }
     `;
 
@@ -747,6 +750,12 @@
                                 <div id="q-prod-thumbs" class="q-prod-thumbs"></div>
                                 <button type="button" class="q-thumb-arrow q-thumb-arrow-right" aria-label="Pr&#243;ximo" onclick="document.getElementById('q-prod-thumbs').scrollBy({left:240,behavior:'smooth'})">&#8250;</button>
                             </div>
+                        </div>
+
+                        <!-- Comprimento (mega hair): espelha a variação de CM da página -->
+                        <div id="q-length-group" style="display:none;">
+                            <p class="q-section-label">Comprimento</p>
+                            <div id="q-length-opts" class="q-length-opts"></div>
                         </div>
 
                         <!-- Photo section -->
@@ -1452,6 +1461,7 @@
         function openModal() {
             try { startFaceDetect(); } catch (e) {}
             plTrackOpen();
+            plRenderLengths();
             // Lazy-load Phosphor Icons na primeira abertura
             if (!window.phosphorIconsLoaded) {
                 var ph = document.createElement('script');
@@ -2184,6 +2194,42 @@ const fd = new FormData();
             var sel = Array.prototype.map.call(form.querySelectorAll('select.js-variation-option'), function (s) { return s.value; });
             return list.find(function (x) { return sel.length && sel.every(function (val, i) { return x['option' + i] === val; }); }) || list[0] || null;
         } catch (_) { return null; }
+    }
+
+    // Select de comprimento (CM) da página do produto.
+    function plLengthSelect() {
+        var form = document.querySelector('[data-store^="product-form-"]') || document;
+        var sels = form.querySelectorAll('select');
+        for (var i = 0; i < sels.length; i++) {
+            if (Array.prototype.some.call(sels[i].options, function (o) { return /^\s*\d{2,3}\s*cm\b/i.test(o.value); })) return sels[i];
+        }
+        return null;
+    }
+
+    // Botões de comprimento na janela do provador. Trocar aqui troca a variação da
+    // página (preço, parcelamento e o que vai para a geração ficam sempre iguais).
+    function plRenderLengths() {
+        var grp = document.getElementById('q-length-group'), box = document.getElementById('q-length-opts');
+        var sel = plLengthSelect();
+        if (!grp || !box) return;
+        if (!sel) { grp.style.display = 'none'; return; }
+        box.innerHTML = '';
+        Array.prototype.forEach.call(sel.options, function (o) {
+            if (!/\d{2,3}\s*cm/i.test(o.value)) return;
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'q-length-opt' + (o.value === sel.value ? ' is-on' : '');
+            b.textContent = o.value.replace(/\s+/g, ' ').trim().toLowerCase();
+            b.addEventListener('click', function () {
+                if (sel.value !== o.value) {
+                    sel.value = o.value;
+                    sel.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                plRenderLengths();
+            });
+            box.appendChild(b);
+        });
+        grp.style.display = 'block';
     }
 
     // Estoque real da variação selecionada. null = sem controle de estoque.
