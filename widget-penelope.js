@@ -182,6 +182,11 @@
 
         /* ── Trigger (selo sobre foto) ── */
         @keyframes q-shake { 0%,50%,100%{transform:rotate(0deg)} 10%,30%{transform:rotate(-10deg)} 20%,40%{transform:rotate(10deg)} }
+        /* Glow rosa bem leve atrás do selo (pulsa devagar) */
+        @keyframes q-glow { 0%,100%{opacity:.55;transform:scale(1)} 50%{opacity:.95;transform:scale(1.12)} }
+        .q-btn-trigger-ia::before { content:''; position:absolute; inset:-9px; border-radius:50%; z-index:-1; pointer-events:none;
+            background: radial-gradient(circle, rgba(236,72,153,.38) 0%, rgba(236,72,153,.16) 45%, rgba(236,72,153,0) 72%);
+            animation: q-glow 2.4s ease-in-out infinite; }
         .q-btn-trigger-ia {
             position: absolute; top: 14px; right: 14px; z-index: 100;
             background: none; border: none; padding: 0; cursor: pointer;
