@@ -4,7 +4,10 @@
         '/produtos/cabelo-cacho-2-indiano-elastico',          // cacheado
         '/produtos/cabelo-indiano-fita-nanopele-liso-ondulado' // liso ondulado
     ];
-    function plIsPilot() { var p = window.location.pathname || ''; return PL_PILOT_PATHS.some(function (x) { return p.indexOf(x) === 0; }); }
+    // 25/09/2026: provador liberado em TODOS os produtos (antes só nos 2 pilotos acima).
+    // O gerador escolhe cacheado x liso pelo nome do produto, então serve pra qualquer mega hair.
+    function plIsPilotOriginal() { var p = window.location.pathname || ''; return PL_PILOT_PATHS.some(function (x) { return p.indexOf(x) === 0; }); }
+    function plIsPilot() { var p = window.location.pathname || ''; return /^\/produtos\/[^/]+/.test(p); }
     function toJpeg(file){return new Promise(function(res){try{var img=new Image();var u=URL.createObjectURL(file);img.onload=function(){URL.revokeObjectURL(u);var w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;if(!w||!h){res(file);return;}var sc=Math.min(1,1280/Math.max(w,h));var cw=Math.round(w*sc),ch=Math.round(h*sc);var c=document.createElement('canvas');c.width=cw;c.height=ch;c.getContext('2d').drawImage(img,0,0,cw,ch);c.toBlob(function(b){res(b||file);},'image/jpeg',0.92);};img.onerror=function(){URL.revokeObjectURL(u);res(file);};img.src=u;}catch(e){res(file);}});}
 
     function isValidBRPhone(nums) {
@@ -33,7 +36,7 @@
                 if (document.querySelector('.pl-seo-badge')) return;
                 var path = window.location.pathname;
                 var isProduct = path.includes('/produto/') || path.includes('/produtos/') || path.includes('/products/') || path.includes('/p/') || document.querySelector('meta[property="og:type"][content="product"]');
-                if (!isProduct || !plIsPilot()) return;
+                if (!isProduct || !plIsPilotOriginal()) return;
                 var b = document.createElement('div');
                 b.className = 'pl-seo-badge';
                 b.style.cssText = 'text-align:center;padding:4px 0;margin:0;opacity:0.5;line-height:1;';
