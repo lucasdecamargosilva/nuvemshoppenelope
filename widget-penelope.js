@@ -184,15 +184,15 @@
         @keyframes q-shake { 0%,50%,100%{transform:rotate(0deg)} 10%,30%{transform:rotate(-10deg)} 20%,40%{transform:rotate(10deg)} }
         /* Glow rosa bem leve atrás do selo (pulsa devagar) */
         @keyframes q-glow { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.18)} }
-        .q-btn-trigger-ia::before { content:''; position:absolute; inset:-16px; border-radius:50%; z-index:-1; pointer-events:none;
-            background: radial-gradient(circle, rgba(236,72,153,.75) 0%, rgba(236,72,153,.45) 45%, rgba(236,72,153,0) 72%);
+        .q-btn-trigger-ia::before { content:''; position:absolute; inset:-20px; border-radius:50%; z-index:-1; pointer-events:none;
+            background: radial-gradient(circle, rgba(236,72,153,.9) 50%, rgba(236,72,153,.55) 62%, rgba(236,72,153,.2) 74%, rgba(236,72,153,0) 86%);
             animation: q-glow 2.4s ease-in-out infinite; }
         .q-btn-trigger-ia {
             position: absolute; top: 14px; right: 14px; z-index: 100;
             background: none; border: none; padding: 0; cursor: pointer;
             width: 70px; height: 70px;
             display: flex; align-items: center; justify-content: center;
-            filter: drop-shadow(0 0 10px rgba(236,72,153,0.75)) drop-shadow(0 3px 8px rgba(0,0,0,0.18));
+            filter: drop-shadow(0 0 8px rgba(236,72,153,0.95)) drop-shadow(0 3px 8px rgba(0,0,0,0.15));
             animation: q-shake 3s infinite;
             transition: filter 0.2s;
         }
