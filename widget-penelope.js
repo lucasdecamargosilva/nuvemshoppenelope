@@ -184,7 +184,7 @@
         @keyframes q-shake { 0%,50%,100%{transform:rotate(0deg)} 10%,30%{transform:rotate(-10deg)} 20%,40%{transform:rotate(10deg)} }
         /* Glow rosa bem leve atrás do selo (pulsa devagar) */
         @keyframes q-glow { 0%{opacity:.75;transform:scale(1) rotate(0deg)} 50%{opacity:1;transform:scale(1.06) rotate(30deg)} 100%{opacity:.75;transform:scale(1) rotate(60deg)} }
-        .q-btn-trigger-ia::before { content:''; position:absolute; inset:-12px; z-index:-1; filter:blur(.4px); pointer-events:none;
+        .q-btn-trigger-ia::before { content:''; position:absolute; inset:-8px; z-index:-1; filter:blur(.4px); pointer-events:none;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='g' gradientUnits='userSpaceOnUse' cx='50' cy='50' r='50'%3E%3Cstop offset='70%25' stop-color='%23ec4899' stop-opacity='.9'/%3E%3Cstop offset='100%25' stop-color='%23ec4899' stop-opacity='.4'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg fill='url%28%23g%29'%3E%3Ccircle cx='50' cy='50' r='40'/%3E%3Ccircle cx='82.00' cy='50.00' r='18'/%3E%3Ccircle cx='66.00' cy='77.71' r='18'/%3E%3Ccircle cx='34.00' cy='77.71' r='18'/%3E%3Ccircle cx='18.00' cy='50.00' r='18'/%3E%3Ccircle cx='34.00' cy='22.29' r='18'/%3E%3Ccircle cx='66.00' cy='22.29' r='18'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat;
             animation: q-glow 2.4s linear infinite; }
         .q-btn-trigger-ia {
