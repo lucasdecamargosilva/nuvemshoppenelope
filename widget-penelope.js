@@ -188,7 +188,7 @@
             background: radial-gradient(circle, rgba(236,72,153,.9) 50%, rgba(236,72,153,.55) 62%, rgba(236,72,153,.2) 74%, rgba(236,72,153,0) 86%);
             animation: q-glow 2.4s ease-in-out infinite; }
         .q-btn-trigger-ia {
-            position: absolute; top: 14px; right: 14px; z-index: 100;
+            position: absolute; top: 24px; right: 24px; z-index: 100;
             background: none; border: none; padding: 0; cursor: pointer;
             width: 70px; height: 70px;
             display: flex; align-items: center; justify-content: center;
