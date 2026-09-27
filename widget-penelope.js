@@ -580,6 +580,11 @@
             font-family: var(--font-display); font-size: 28px; letter-spacing: .5px; font-weight: 700;
             color: var(--c-ink); line-height: 1;
         }
+        .q-result-pix {
+            font-family: var(--font-body); font-size: 15px; font-weight: 700;
+            color: var(--c-accent); margin-top: 6px; letter-spacing: .2px;
+        }
+        .q-result-pix span { font-weight: 400; color: var(--c-ink); }
         .q-result-installment {
             font-family: var(--font-body); font-size: 12px; color: var(--c-muted);
             margin-top: 4px; letter-spacing: .2px;
@@ -841,6 +846,7 @@
                             <div class="q-result-prodinfo" id="q-result-prodinfo" style="display:none;">
                                 <div class="q-result-prodname" id="q-result-prodname"></div>
                                 <div class="q-result-prodprice" id="q-result-prodprice"></div>
+                                <div class="q-result-pix" id="q-result-pix" style="display:none;"></div>
                                 <div class="q-result-installment" id="q-result-installment"></div>
                                 <div class="q-scarcity" id="q-scarcity" style="display:none;"><i class="ph-bold ph-fire"></i> APENAS <strong id="q-scarcity-n"></strong>&nbsp;UNIDADES RESTANTES</div>
                             </div>
@@ -1012,6 +1018,19 @@
         return '';
     }
 
+    // Preço no Pix — o MESMO que a página mostra ("R$ 774,30 com Pix").
+    // A Nuvemshop atualiza esse elemento quando a cliente troca a variação.
+    function getPixPrice() {
+        var el = document.querySelector('.js-payment-discount-price-product');
+        if (!el) return '';
+        var box = el.closest('.js-payment-discount-price-product-container') || el;
+        if (getComputedStyle(box).display === 'none') return '';
+        var t = (el.textContent || '').replace(/\s+/g, ' ').trim();
+        if (/\d/.test(t)) return t;
+        var raw = parseInt(el.getAttribute('data-priceraw-without-shipping') || '', 10);
+        return raw > 0 ? 'R$' + (raw / 100).toFixed(2).replace('.', ',') : '';
+    }
+
     function populateBuyCta() {
         var btn = document.getElementById('q-btn-buy-now');
         var trust = document.getElementById('q-seals');
@@ -1024,6 +1043,13 @@
         var priceEl = document.getElementById('q-result-prodprice');
         if (nameEl) nameEl.textContent = (prodName || '').trim();
         if (priceEl) priceEl.textContent = price || '';
+        var pixEl = document.getElementById('q-result-pix');
+        if (pixEl) {
+            var _pix = getPixPrice();
+            pixEl.textContent = '';
+            if (_pix) { pixEl.appendChild(document.createTextNode(_pix + ' ')); var _com = document.createElement('span'); _com.textContent = 'com Pix'; pixEl.appendChild(_com); }
+            pixEl.style.display = _pix ? 'block' : 'none';
+        }
         var instEl = document.getElementById('q-result-installment');
         if (instEl) { var _inst = getInstallment(); instEl.textContent = _inst; instEl.style.display = _inst ? 'block' : 'none'; }
         if (info && ((prodName || '').trim() || price)) info.style.display = 'block';
