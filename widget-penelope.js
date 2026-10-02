@@ -2151,6 +2151,10 @@
 
 
     function init() {
+        // Provador DESLIGADO a pedido do Lucas (02/10/2026). Religar = trocar true por false.
+        var PL_PROVADOR_OFF = true;
+        if (PL_PROVADOR_OFF) return;
+
 
         // --- FILTRO DE CATEGORIA (HAT) ---
 
